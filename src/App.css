@@ -9,6 +9,10 @@ td {
   padding: 8px;
 }
 
+.checkmark {
+  border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;
+}
+
 
 .table-items {
   width: 100%;
@@ -21,6 +25,12 @@ tr:nth-child(even) {
   background-color: #f2f2f2
 }
 
+.center {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  color : #e60909;
+}
 
 .slideInRight {
   -webkit-animation-name: slideInRight;
@@ -56,3 +66,7 @@ tr:nth-child(even) {
     transform: translateX(0);
   }
 }
+
+
+
+  

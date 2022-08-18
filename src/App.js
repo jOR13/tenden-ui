@@ -14,6 +14,7 @@ function App() {
   const [order, setOrder] = useState([]);
   const [modal, setModal] = useState(false);
   const [error, setError] = useState(false);
+  const [modalPayment, setModalPayment] = useState(false);
   const [products, setProducts] = useState({
     id: Math.floor(Math.random() * 1000000).toString(),
     sku: "",
@@ -42,7 +43,7 @@ function App() {
     fetchOrders()
   }, [])
 
-  const actualizarState = (e) => {
+  const updateState = (e) => {
     setProducts({
       ...products,
       [e.target.name]: e.target.value,
@@ -56,12 +57,12 @@ function App() {
   }
 
   const handleSubmit = (e) => {
-    
+
     if (
       sku.trim() === "" ||
       name.trim() === "" ||
       price.trim() === "" ||
-      quantity.trim() === "" 
+      quantity.trim() === ""
     ) {
       setError(true);
       return;
@@ -71,7 +72,7 @@ function App() {
     const id = Math.floor(Math.random() * 1000000).toString()
     let newProduct = [...data, { id: id, items: [products] }]
     setData(newProduct)
-    
+
     clearForm()
   }
 
@@ -84,6 +85,15 @@ function App() {
     });
     setError(false);
   }
+
+  // calculate total price
+  const totalPrice = data.reduce((total, order) => {
+    return total + order.items.reduce((total, item) => {
+      return total + (item.price * item.quantity)
+    }, 0)
+  }, 0)
+  console.log(totalPrice)
+
 
   return (
     <div className='card-content'>
@@ -109,27 +119,49 @@ function App() {
           </div>
         ) : null
       }
+
+
+      {
+        modalPayment ? (
+          <div className={`modal ${modalPayment ? 'is-active' : ''}`}>
+            <div className="modal-background"></div>
+            <div className="modal-card">
+              <header className="modal-card-head">
+                <button className="delete" aria-label="close" onClick={() => setModalPayment(false)}></button>
+              </header>
+              <section className="modal-card-body">
+                <div className="columns">
+                  <div className="column">
+                    <img src="https://momentumacademy.net/wp-content/uploads/2020/05/Paymentsuccessful21.png" alt="PayPal" />
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        ) : null
+      }
+
       <div className="columns is-multiline">
         <div className="columns">
           <div className="column mt-3 mt-5">
-          {error ? (
-            <div className="notification is-danger slideInRight">
-            <button 
-              onClick={() => setError(false)}
-            className="delete"></button>
-             You must fill all the fields
-            </div>
-            
-          ) : null}
+            {error ? (
+              <div className="notification is-danger slideInRight">
+                <button
+                  onClick={() => setError(false)}
+                  className="delete"></button>
+                You must fill all the fields
+              </div>
+
+            ) : null}
             <div className="field">
               <label className="label">SKU</label>
               <div className="control">
-              <input
-                className="input"
+                <input
+                  className="input"
                   type="text"
                   name="sku"
                   placeholder="SKU"
-                  onChange={actualizarState}
+                  onChange={updateState}
                   value={sku}
                 />
               </div>
@@ -143,7 +175,7 @@ function App() {
                   type="text"
                   name="name"
                   placeholder="Name"
-                  onChange={actualizarState}
+                  onChange={updateState}
                   value={products.name}
                 />
               </div>
@@ -157,7 +189,7 @@ function App() {
                   type="text"
                   name="quantity"
                   placeholder="Quantity"
-                  onChange={actualizarState}
+                  onChange={updateState}
                   value={products.quantity}
                 />
               </div>
@@ -171,7 +203,7 @@ function App() {
                   type="text"
                   name="price"
                   placeholder="Price"
-                  onChange={actualizarState}
+                  onChange={updateState}
                   value={products.price}
                 />
               </div>
@@ -181,11 +213,11 @@ function App() {
               <div className="control">
                 <button className="button is-link"
                   onClick={handleSubmit}
-                >Save</button>
+                >Add</button>
 
               </div>
               <div className="control">
-                <button 
+                <button
                   onClick={clearForm}
                   className="button is-link is-light">Clear</button>
               </div>
@@ -240,7 +272,12 @@ function App() {
 
                   </tbody>
                 </table>
-
+                <div className="card center is-flex is-flex-direction-column is-justify-content-space-between mb-3">
+                  <h1>Total: {totalPrice}</h1>
+                  <button className="button is-link is-fullwidth" onClick={() =>
+                    setModalPayment(true)
+                  }>Pay</button>
+                </div>
               </div>
             ) : (
               <div>
